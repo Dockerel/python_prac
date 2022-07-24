@@ -1,9 +1,7 @@
 #python3 -m pip install [module_name]
-import requests
-from bs4 import BeautifulSoup
-from indeed import extract_indeed_jobs, extract_indeed_pages #한글 검색어를 컴퓨터 언어로 변환å
-from indeed import extract_indeed_pages, extract_indeed_jobs
+from indeed import get_jobs as get_indeed_jobs
+from save import save_to_file
 
-last_indeed_page = extract_indeed_pages()
+indeed_jobs = get_indeed_jobs()
 
-indeed_jobs = extract_indeed_jobs(last_indeed_page)
+save_to_file(indeed_jobs)

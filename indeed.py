@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 LIMIT = 50
 URL = f"https://kr.indeed.com/취업?q=python&limit={LIMIT}"
+jobs = []
 
 def extract_indeed_pages():
 
@@ -27,22 +28,35 @@ def extract_indeed_jobs(last_page):
         results = soup.find_all("div", {"class":"job_seen_beacon"})
 
         for result in results:
-            print(extract_job(result, page))
+            job = extract_job(result)
+            jobs.append(job)
+        print(f"scrapping page{page+1}")
+
+    return jobs
             
         
         
-def extract_job(html, num):
+def extract_job(html):
     title = html.find('a')["aria-label"]
     comp_loc = html.find("div", {"class":"companyInfo"})
     companyName = comp_loc.find("span", {"class" : "companyName"}).string
     companyLocation = comp_loc.find("div", {"class" : "companyLocation"}).string
 
-
+    
     job_id = html.find('a')["data-jk"]
     job_link = f"https://kr.indeed.com/viewjob?jk={job_id}"
     info_result = requests.get(job_link)
     jb_soup = BeautifulSoup(info_result.text, "html.parser")
-    jb_info = jb_soup.find("div", {"class" : "jobsearch-jobDescriptionText"}).text
 
 
-    return {'title' : title, 'company' : companyName, 'location' : companyLocation, 'job_info' : jb_info, 'job_link' : job_link}
+    return {
+        'title' : title,
+        'company' : companyName,
+        'location' : companyLocation,
+        'job_link' : job_link
+        }
+
+def get_jobs():
+    #job_list = extract_indeed_jobs(extract_indeed_pages())
+    job_list = extract_indeed_jobs(extract_indeed_pages())
+    return job_list
